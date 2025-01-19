@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Tasks</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Animation for when the add task modal is opened and closed */
+        .animate-modal {
+            animation: modal-animation 0.5s;
+        }
+
+        @keyframes modal-animation {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Animation for when a task is deleted */
+        .animate-delete {
+            animation: delete-animation 0.5s;
+        }
+
+        @keyframes delete-animation {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* Animation for when the tasks are rendered */
+        .animate-render {
+            animation: render-animation 0.5s;
+        }
+
+        @keyframes render-animation {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Animation for when the search bar is used to filter tasks */
+        .animate-search {
+            animation: search-animation 0.5s;
+        }
+
+        @keyframes search-animation {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900">Gaming Tasks</h1>
+        </div>
+    </nav>
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Task List</h2>
+            <button type="button" id="add-task-btn" class="px-4 py-2 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out" data-modal-toggle="add-task-modal">Add Task</button>
+        </div>
+        <input type="text" id="search-bar" class="block w-full p-2 pl-10 text-sm text-gray-700" placeholder="Search tasks...">
+        <ul class="todo-list" id="todo-list"></ul>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="add-task-modal" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">
+        <div class="relative p-4 w-full max-w-md h-full md:h-auto">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 animate-modal">
+                <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:shadow-md rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800" data-modal-toggle="add-task-modal">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 10.828 14.293 4.293a1 1 0 111.414 1.414L10 13.414l-4.293 4.293a1 1 0 01-1.414-1.414L10 10.828 5.707 4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                </button>
+                <div class="py-6 px-6 lg:px-8">
+                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Add Task</h3>
+                    <form id="add-task-form">
+                        <div class="mb-6">
+                            <label for="task-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Task Name</label>
+                            <input type="text" id="task-name" name="task-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        </div>
+                        <div class="mb-6">
+                            <label for="game-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Game Name</label>
+                            <input type="text" id="game-name" name="game-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        </div>
+                        <div class="mb-6">
+                            <label for="task-priority" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Task Priority</label>
+                            <select id="task-priority" name="task-priority" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="task-due-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Task Due Date</label>
+                            <input type="date" id="task-due-date" name="task-due-date" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        </div>
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add Task</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const todoList = document.getElementById('todo-list');
+        const addTodoBtn = document.getElementById('add-task-btn');
+        const addTaskForm = document.getElementById('add-task-form');
+        const taskName = document.getElementById('task-name');
+        const gameName = document.getElementById('game-name');
+        const taskPriority = document.getElementById('task-priority');
+        const taskDueDate = document.getElementById('task-due-date');
+        const searchBar = document.getElementById('search-bar');
+
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function renderTodoList(filteredTodos = todos) {
+            todoList.innerHTML = '';
+            filteredTodos.forEach((todo, index) => {
+                const todoItem = document.createElement('li');
+                todoItem.classList.add('animate-render');
+                todoItem.innerHTML = `
+                    <div class="flex justify-between items-center py-4 border-b border-gray-300">
+                        <div class="flex items-center">
+                            <span class="todo-text text-gray-600">${todo.taskName}</span>
+                            <span class="todo-text text-gray-600 ml-4">${todo.gameName}</span>
+                        </div>
+                        <button type="button" class="px-4 py-2 bg-red-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out delete-todo" data-index="${index}">Delete</button>
+                        <button type="button" class="ml-4 px-4 py-2 bg-blue-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out edit-todo" data-index="${index}">Edit</button>
+                    </div>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        }
+
+        renderTodoList();
+
+        addTodoBtn.addEventListener('click', () => {
+            const addTaskModal = document.getElementById('add-task-modal');
+            addTaskModal.classList.remove('hidden');
+            addTaskModal.classList.add('animate-modal');
+        });
+
+        addTaskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const todoTaskName = taskName.value.trim();
+            const todoGameName = gameName.value.trim();
+            const todoPriority = taskPriority.value;
+            const todoDueDate = taskDueDate.value;
+            if (todoTaskName && todoGameName) {
+                todos.push({ taskName: todoTaskName, gameName: todoGameName, priority: todoPriority, dueDate: todoDueDate, completed: false });
+                localStorage.setItem('todos', JSON.stringify(todos));
+                taskName.value = '';
+                gameName.value = '';
+                taskPriority.value = 'Low';
+                taskDueDate.value = '';
+                const addTaskModal = document.getElementById('add-task-modal');
+                addTaskModal.classList.add('hidden');
+                addTaskModal.classList.remove('animate-modal');
+                renderTodoList();
+            }
+        });
+
+        todoList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-todo')) {
+                e.target.parentNode.parentNode.classList.add('animate-delete');
+                setTimeout(() => {
+                    const index = parseInt(e.target.dataset.index);
+                    todos.splice(index, 1);
+                    localStorage.setItem('todos', JSON.stringify(todos));
+                    renderTodoList();
+                }, 500);
+            }
+        });
+
+        searchBar.addEventListener('input', (e) => {
+            const searchQuery = e.target.value.toLowerCase();
+            const filteredTodos = todos.filter((todo) => todo.taskName.toLowerCase().includes(searchQuery) || todo.gameName.toLowerCase().includes(searchQuery));
+            todoList.innerHTML = '';
+            filteredTodos.forEach((todo, index) => {
+                const todoItem = document.createElement('li');
+                todoItem.classList.add('animate-render');
+                todoItem.innerHTML = `
+                    <div class="flex justify-between items-center py-4 border-b border-gray-300">
+                        <div class="flex items-center">
+                            <span class="todo-text text-gray-600">${todo.taskName}</span>
+                            <span class="todo-text text-gray-600 ml-4">${todo.gameName}</span>
+                        </div>
+                        <button type="button" class="px-4 py-2 bg-red-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out delete-todo" data-index="${index}">Delete</button>
+                        <button type="button" class="ml-4 px-4 py-2 bg-blue-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out edit-todo" data-index="${index}">Edit</button>
+                    </div>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        });
+    </script>
+</body>
+</html>
